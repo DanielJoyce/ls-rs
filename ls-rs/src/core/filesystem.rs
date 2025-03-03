@@ -1,4 +1,6 @@
 use crate::core::display::DisplayConfig;
+use crate::core::sorting::{SortKey, SortOptions};
+use crate::security::selinux::{SELinuxContext, SELinuxHandler};
 use crate::{Args, SortBy};
 use std::fs::{self, DirEntry};
 use std::io;
@@ -15,7 +17,26 @@ pub fn list_directory(path: &str, args: &Args, config: &DisplayConfig) -> io::Re
     let path = Path::new(path);
     let mut entries = collect_entries(path, args)?;
 
-    sort_entries(&mut entries, args);
+    let sort_options = SortOptions {
+        key: match args.sort {
+            SortBy::Name => SortKey::Name,
+            SortBy::Size => SortKey::Size,
+            SortBy::Time => SortKey::Time,
+            SortBy::Extension => SortKey::Extension,
+            SortBy::Type => SortKey::Type,
+            SortBy::Owner => SortKey::Owner,
+            SortBy::Group => SortKey::Group,
+            SortBy::None => SortKey::None,
+        },
+        reverse: args.reverse,
+        dirs_first: args.dirs_first,
+        case_sensitive: args.case_sensitive,
+        numeric_sort: false,
+        version_sort: false,
+        locale_sort: false,
+    };
+
+    crate::core::sorting::sort_entries(&mut entries, &sort_options);
 
     crate::core::display::display_entries(&entries, config)
 }
@@ -92,23 +113,11 @@ fn format_time(time: std::time::SystemTime) -> String {
         .to_string()
 }
 
-fn sort_entries(entries: &mut Vec<FileInfo>, args: &Args) {
-    match args.sort {
-        SortBy::Name => entries.sort_by(|a, b| a.name.cmp(&b.name)),
-        SortBy::Size => entries.sort_by(|a, b| b.metadata.len().cmp(&a.metadata.len())),
-        SortBy::Time => entries.sort_by(|a, b| {
-            b.metadata
-                .modified()
-                .unwrap_or_else(|_| std::time::UNIX_EPOCH)
-                .cmp(
-                    &a.metadata
-                        .modified()
-                        .unwrap_or_else(|_| std::time::UNIX_EPOCH),
-                )
-        }),
-    }
-
-    if args.reverse {
-        entries.reverse();
+impl FileInfo {
+    pub fn get_selinux_context(
+        &self,
+        handler: &SELinuxHandler,
+    ) -> io::Result<Option<SELinuxContext>> {
+        handler.get_context(Path::new(&self.path))
     }
 }
