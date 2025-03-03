@@ -1,4 +1,4 @@
-use crate::Args;
+use crate::{Args, SortBy};
 use std::fs::{self, DirEntry};
 use std::io;
 use std::os::unix::fs::MetadataExt;
@@ -12,7 +12,10 @@ pub struct FileInfo {
 
 pub fn list_directory(path: &str, args: &Args) -> io::Result<()> {
     let path = Path::new(path);
-    let entries = collect_entries(path, args)?;
+    let mut entries = collect_entries(path, args)?;
+
+    // Sort entries based on args
+    sort_entries(&mut entries, args);
 
     if args.long {
         display_long_format(&entries)
@@ -91,4 +94,25 @@ fn format_time(time: std::time::SystemTime) -> String {
     chrono::DateTime::<chrono::Local>::from(time)
         .format("%b %d %H:%M")
         .to_string()
+}
+
+fn sort_entries(entries: &mut Vec<FileInfo>, args: &Args) {
+    match args.sort {
+        SortBy::Name => entries.sort_by(|a, b| a.name.cmp(&b.name)),
+        SortBy::Size => entries.sort_by(|a, b| b.metadata.len().cmp(&a.metadata.len())),
+        SortBy::Time => entries.sort_by(|a, b| {
+            b.metadata
+                .modified()
+                .unwrap_or_else(|_| std::time::UNIX_EPOCH)
+                .cmp(
+                    &a.metadata
+                        .modified()
+                        .unwrap_or_else(|_| std::time::UNIX_EPOCH),
+                )
+        }),
+    }
+
+    if args.reverse {
+        entries.reverse();
+    }
 }
