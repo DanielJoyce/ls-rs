@@ -1,0 +1,16 @@
+[package]
+name = "rust-ls"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+clap = { version = "4.4", features = ["derive"] }
+libc = "0.2"
+users = "0.11"
+chrono = "0.4"
+unicode-width = "0.1"
+term_size = "0.3"
+regex = "1.5"
+glob = "0.3"
+atty = "0.2"
+termcolor = "1.2"
