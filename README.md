@@ -14,10 +14,10 @@ used it to generate this file.
 
 **I have NOT undertaken any heavy checking of the claims made in this file.**
 
-Some things may or may not be fully integrated or generated yet. I was surpised how far sonnet 3.5
+Some things may or may not be fully integrated or generated yet. I was surprised how far sonnet 3.5
 could get even with the pretty lean specs it generated.
 
-The code generated was generally syntactically crate though sometimes a crate import would be
+The code generated was generally syntactically correct though sometimes a crate import would be
 missing.
 
 Anyways, in the end, 1000 lines of code was generated in about 45 minutes of back and forth.
