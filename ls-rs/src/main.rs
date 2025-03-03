@@ -26,6 +26,14 @@ struct Args {
     /// Reverse sort order
     #[arg(short = 'r', long = "reverse")]
     reverse: bool,
+
+    /// Enable colorized output
+    #[arg(short = 'c', long = "color", default_value = "true")]
+    color: bool,
+
+    /// Display file sizes in human readable format
+    #[arg(short = 'h', long = "human-readable")]
+    human_readable: bool,
 }
 
 #[derive(Debug, Copy, Clone, PartialEq, Eq, ValueEnum)]
@@ -37,9 +45,15 @@ enum SortBy {
 
 fn main() {
     let args = Args::parse();
+    let config = core::display::DisplayConfig {
+        term_width: core::display::get_terminal_width(),
+        color_enabled: args.color,
+        use_long_format: args.long,
+        human_readable: args.human_readable,
+    };
 
     for path in &args.paths {
-        if let Err(e) = core::filesystem::list_directory(path, &args) {
+        if let Err(e) = core::filesystem::list_directory(path, &args, &config) {
             eprintln!("rust-ls: {}: {}", path, e);
         }
     }

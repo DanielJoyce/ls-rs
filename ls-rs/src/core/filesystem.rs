@@ -1,3 +1,4 @@
+use crate::core::display::DisplayConfig;
 use crate::{Args, SortBy};
 use std::fs::{self, DirEntry};
 use std::io;
@@ -10,18 +11,13 @@ pub struct FileInfo {
     pub path: String,
 }
 
-pub fn list_directory(path: &str, args: &Args) -> io::Result<()> {
+pub fn list_directory(path: &str, args: &Args, config: &DisplayConfig) -> io::Result<()> {
     let path = Path::new(path);
     let mut entries = collect_entries(path, args)?;
 
-    // Sort entries based on args
     sort_entries(&mut entries, args);
 
-    if args.long {
-        display_long_format(&entries)
-    } else {
-        display_short_format(&entries)
-    }
+    crate::core::display::display_entries(&entries, config)
 }
 
 fn collect_entries(path: &Path, args: &Args) -> io::Result<Vec<FileInfo>> {

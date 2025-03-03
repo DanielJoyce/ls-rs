@@ -7,6 +7,7 @@ pub struct DisplayConfig {
     pub term_width: usize,
     pub color_enabled: bool,
     pub use_long_format: bool,
+    pub human_readable: bool,
 }
 
 impl Default for DisplayConfig {
@@ -15,6 +16,7 @@ impl Default for DisplayConfig {
             term_width: get_terminal_width(),
             color_enabled: true,
             use_long_format: false,
+            human_readable: false,
         }
     }
 }
@@ -121,7 +123,7 @@ fn display_columns(entries: &[FileInfo], config: &DisplayConfig) -> io::Result<(
     Ok(())
 }
 
-fn get_terminal_width() -> usize {
+pub fn get_terminal_width() -> usize {
     if let Some((width, _)) = term_size::dimensions() {
         width
     } else {
