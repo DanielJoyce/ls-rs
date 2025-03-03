@@ -1,4 +1,5 @@
 use crate::core::filesystem::FileInfo;
+use crate::security::permissions;
 use std::io::{self, Write};
 use std::os::unix::fs::{MetadataExt, PermissionsExt};
 use unicode_width::UnicodeWidthStr;
@@ -143,8 +144,7 @@ fn get_entry_color(entry: &FileInfo) -> &'static str {
 
 // These functions are used by both display formats
 fn get_mode_string(metadata: &std::fs::Metadata) -> String {
-    // This will be implemented in security/permissions.rs
-    String::new()
+    permissions::get_mode_string(metadata)
 }
 
 fn get_user_name(uid: u32) -> String {
