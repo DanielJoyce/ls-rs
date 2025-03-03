@@ -1,6 +1,30 @@
 # ls-rs: A Rust Implementation of ls
 
-This project is a Rust implementation of the Unix `ls` command, created through a unique reverse engineering and specification-driven development process.
+This project is a Rust implementation of the Unix `ls` command, created through a unique reverse
+engineering and specification-driven development process.
+
+---
+
+Start Non-generated comments
+
+For more information on the process, see the [blog post](https://ghuntley.com/z80/).
+
+I use cursor AI and Sonnet 3.5 to generate almost all ( 99.9%) of the code in this project. I also
+used it to generate this file.
+
+**I have NOT undertaken any heavy checking of the claims made in this file.**
+
+Some things may or may not be fully integrated or generated yet. I was surpised how far sonnet 3.5
+could get even with the pretty lean specs it generated.
+
+The code generated was generally syntactically crate though sometimes a crate import would be
+missing.
+
+Anyways, in the end, 1000 lines of code was generated in about 45 minutes of back and forth.
+
+End Non-generated comments
+
+---
 
 ## Project Genesis
 
